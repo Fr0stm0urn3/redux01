@@ -1,5 +1,13 @@
+import PostsList from "./features/posts/PostsList"
+import AddPostForm from "./features/posts/AddPostForm"
+
 const App = () => {
-  return <h1>App</h1>
+  return (
+    <>
+      <AddPostForm />
+      <PostsList />
+    </>
+  )
 }
 
 export default App
