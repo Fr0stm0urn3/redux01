@@ -26,7 +26,8 @@ export const updatePost = createAsyncThunk("posts/updatePost", async (initialPos
     const response = await axios.put(`${POSTS_URL}/${id}`, initialPost)
     return response.data
   } catch (error) {
-    return error.message
+    // return error.message
+    return initialPost //Only for testing redux
   }
 })
 
@@ -111,10 +112,10 @@ const postsSlice = createSlice({
         action.payload.date = new Date().toISOString()
         action.payload.reactions = {
           thumbsUp: 0,
-          hooray: 0,
+          wow: 0,
           heart: 0,
           rocket: 0,
-          eyes: 0,
+          coffee: 0,
         }
         console.log(action.payload)
         state.posts.push(action.payload)
