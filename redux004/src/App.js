@@ -1,5 +1,13 @@
+import AddPostForm from "./components/AddPostForm"
+import PostsList from "./components/PostsList"
+
 const App = () => {
-  return <div>App</div>
+  return (
+    <>
+      <AddPostForm />
+      <PostsList />
+    </>
+  )
 }
 
 export default App
