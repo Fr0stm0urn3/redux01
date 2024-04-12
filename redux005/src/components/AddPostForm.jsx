@@ -1,13 +1,14 @@
 import { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { postsAdded } from "../features/posts/postsSlice"
 import { selectAllUsers } from "../features/users/usersSlice"
+import { addNewPost } from "../features/posts/postsSlice"
 
 const AddPostForm = () => {
   const users = useSelector(selectAllUsers)
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [userId, setUserId] = useState("")
+  const [addRequestStatus, setAddRequestStatus] = useState("idle")
   const dispatch = useDispatch()
   const handleTitleChange = (e) => setTitle(e.target.value)
   const handleContentChange = (e) => setContent(e.target.value)
@@ -19,15 +20,22 @@ const AddPostForm = () => {
     </option>
   ))
 
-  const canSave = [title, content, userId].every(Boolean)
+  const canSave = [title, content, userId].every(Boolean) && addRequestStatus === "idle"
 
   const handlePostSaveClick = () => {
     if (canSave) {
-      dispatch(postsAdded(title, content, userId))
+      try {
+        setAddRequestStatus("pending")
+        dispatch(addNewPost({ title, userId, body: content })).unwrap()
 
-      setTitle("")
-      setContent("")
-      setUserId("")
+        setTitle("")
+        setContent("")
+        setUserId("")
+      } catch (error) {
+        console.error("Failed to fetch data", error)
+      } finally {
+        setAddRequestStatus("idle")
+      }
     }
   }
 
