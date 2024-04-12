@@ -1,79 +1,67 @@
-import { useSelector, useDispatch } from "react-redux"
-import { selectAllUsers } from "../features/users/usersSlice"
-import { addNewPost } from "../features/posts/postsSlice"
 import { useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { postsAdded } from "../features/posts/postsSlice"
+import { selectAllUsers } from "../features/users/usersSlice"
 
 const AddPostForm = () => {
+  const users = useSelector(selectAllUsers)
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
-  const [usersIds, setUsersIds] = useState("")
-  const [addRequestStatus, setAddRequestStatus] = useState("idle")
-
-  const users = useSelector(selectAllUsers)
-
+  const [userId, setUserId] = useState("")
   const dispatch = useDispatch()
+  const handleTitleChange = (e) => setTitle(e.target.value)
+  const handleContentChange = (e) => setContent(e.target.value)
+  const handleUserIdChange = (e) => setUserId(e.target.value)
 
-  const canSave = [title, content, usersIds].every(Boolean) && addRequestStatus === "idle"
+  const selectAuthor = users.map((user) => (
+    <option value={user.id} key={user.id}>
+      {user.name}
+    </option>
+  ))
 
-  const onSavePostClicked = () => {
+  const canSave = [title, content, userId].every(Boolean)
+
+  const handlePostSaveClick = () => {
     if (canSave) {
-      try {
-        setAddRequestStatus("pending")
-        dispatch(addNewPost({ title, body: content, usersIds })).unwrap()
+      dispatch(postsAdded(title, content, userId))
 
-        setTitle("")
-        setContent("")
-        setUsersIds("")
-      } catch (error) {
-        console.error("Failed to save the post", error)
-      } finally {
-        setAddRequestStatus("idle")
-      }
+      setTitle("")
+      setContent("")
+      setUserId("")
     }
   }
 
-  const userOptions = users.map((user) => {
-    return (
-      <option value={user.id} key={user.id}>
-        {user.name}
-      </option>
-    )
-  })
-
-  const onTitleChanged = (e) => setTitle(e.target.value)
-  const onContentChanged = (e) => setContent(e.target.value)
-  const onAuthorChanged = (e) => setUsersIds(e.target.value)
-
   return (
     <section>
-      <h2>Add a New Post</h2>
+      <h2>Add Post</h2>
       <form>
-        <label htmlFor="postTitle">Post Title:</label>
+        <label htmlFor="postTitle">Title:</label>
         <input
           type="text"
-          id="postTitle"
           name="postTitle"
+          id="postTitle"
           value={title}
-          onChange={onTitleChanged}
+          onChange={handleTitleChange}
         />
         <label htmlFor="postAuthor">Author:</label>
         <select
           name="postAuthor"
           id="postAuthor"
-          value={usersIds}
-          onChange={onAuthorChanged}
+          value={userId}
+          onChange={handleUserIdChange}
         >
           <option value=""></option>
-          {userOptions}
+          {selectAuthor}
         </select>
-        <label htmlFor="postContent">Post Content:</label>
-        <textarea
+        <label htmlFor="postContent">Content:</label>
+        <input
+          type="text"
           name="postContent"
           id="postContent"
           value={content}
-          onChange={onContentChanged}
+          onChange={handleContentChange}
         />
-        <button type="button" onClick={onSavePostClicked} disabled={!canSave}>
+        <button type="button" disabled={!canSave} onClick={handlePostSaveClick}>
           Save Post
         </button>
       </form>
