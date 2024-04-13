@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { selectAllUsers } from "../features/users/usersSlice"
 import { addNewPost } from "../features/posts/postsSlice"
+import { useNavigate } from "react-router-dom"
 
 const AddPostForm = () => {
   const users = useSelector(selectAllUsers)
@@ -13,6 +14,7 @@ const AddPostForm = () => {
   const handleTitleChange = (e) => setTitle(e.target.value)
   const handleContentChange = (e) => setContent(e.target.value)
   const handleUserIdChange = (e) => setUserId(e.target.value)
+  const navigate = useNavigate()
 
   const selectAuthor = users.map((user) => (
     <option value={user.id} key={user.id}>
@@ -31,6 +33,7 @@ const AddPostForm = () => {
         setTitle("")
         setContent("")
         setUserId("")
+        navigate(`/`)
       } catch (error) {
         console.error("Failed to fetch data", error)
       } finally {
